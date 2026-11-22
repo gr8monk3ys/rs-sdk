@@ -11,6 +11,7 @@ import { describe, expect, test } from 'bun:test';
 import { BotSDK } from '../index';
 import { BotActions } from '../actions';
 import type { ActionResult, BotWorldState, DialogOption } from '../types';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 function makeOption(index: number, text: string): DialogOption {
     return { index, text, componentId: 6224, buttonType: 6 };
@@ -19,13 +20,13 @@ function makeOption(index: number, text: string): DialogOption {
 function makeState(opts: { dialogOpen: boolean; options?: DialogOption[] }): BotWorldState {
     // Only the dialog field matters — dismissBlockingUI reads dialog first and
     // the stub closes it after one click, so interface/shop/bank never gate.
-    return {
+    return fromPartial<BotWorldState>({
         dialog: {
             isOpen: opts.dialogOpen,
             options: opts.options ?? [],
             isWaiting: false,
         },
-    } as unknown as BotWorldState;
+    });
 }
 
 function mount(states: BotWorldState[]): { bot: BotActions; calls: number[] } {

@@ -132,7 +132,7 @@ export { Spells, type SpellName } from './spells';
 export class BotSDK {
     readonly config: Required<SDKConfig>;
     private ws: WebSocket | null = null;
-    private state: BotWorldState | null = null;
+    protected state: BotWorldState | null = null;
     private stateReceivedAt: number = 0;
     /**
      * Server-configured max chat length, learned from the gateway handshake

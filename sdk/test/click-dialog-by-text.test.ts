@@ -9,6 +9,7 @@
 import { describe, expect, test } from 'bun:test';
 import { BotSDK } from '../index';
 import type { ActionResult, BotWorldState, DialogOption } from '../types';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 function makeOption(index: number, text: string): DialogOption {
     return { index, text, componentId: 1000 + index, buttonType: 0 };
@@ -17,13 +18,13 @@ function makeOption(index: number, text: string): DialogOption {
 function makeState(opts: { dialogOpen: boolean; options?: DialogOption[] }): BotWorldState {
     // Only the dialog field matters — cast the rest. clickDialogByText only
     // touches state.dialog.
-    return {
+    return fromPartial<BotWorldState>({
         dialog: {
             isOpen: opts.dialogOpen,
             options: opts.options ?? [],
             isWaiting: false,
         },
-    } as unknown as BotWorldState;
+    });
 }
 
 function mountSdk(state: BotWorldState | null): { sdk: BotSDK; calls: number[] } {

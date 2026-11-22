@@ -2,18 +2,24 @@
   "name": "server",
   "private": true,
   "scripts": {
-    "check": "bun run typecheck && bun run typecheck:webclient && bun run test",
+    "check": "bun run depcruise && bun run typecheck && bun run typecheck:webclient && bun run test",
     "docs:api": "bun sdk/generate-api-docs.ts",
     "docs:api:check": "bun sdk/generate-api-docs.ts --check",
     "fetch-collision-data": "bun sdk/fetch-collision-data.ts",
     "test": "bun test sdk/test server/webclient/src/bot server/webclient/src/util server/webclient/src/lite server/engine/test/market.test.ts server/engine/test/market-web.test.ts server/engine/test/item-search.test.ts server/engine/test/file-stream.test.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:webclient": "tsc --noEmit -p server/webclient/tsconfig.json",
-    "test:market:integration": "cd server/engine && bun test/market-integration.ts && bun test/market-recovery.ts && bun test/market-protocol.ts && bun test/market-disabled.ts"
+    "test:market:integration": "cd server/engine && bun test/market-integration.ts && bun test/market-recovery.ts && bun test/market-protocol.ts && bun test/market-disabled.ts",
+    "depcruise": "depcruise server/engine/src --config .dependency-cruiser.cjs --ignore-known",
+    "prepare": "simple-git-hooks"
   },
   "devDependencies": {
+    "@total-typescript/shoehorn": "^0.1.2",
     "@types/bun": "latest",
-    "puppeteer": "^24.0.0"
+    "dependency-cruiser": "^18.8.0",
+    "lint-staged": "^17.6.2",
+    "puppeteer": "^24.0.0",
+    "simple-git-hooks": "^2.14.0"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -22,5 +28,11 @@
     "@inquirer/prompts": "^7.5.3",
     "@modelcontextprotocol/sdk": "^1.25.3",
     "open": "^11.0.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bunx lint-staged && bun run typecheck"
+  },
+  "lint-staged": {
+    "server/webclient/src/**/*.ts": "server/webclient/node_modules/.bin/prettier --check"
   }
 }

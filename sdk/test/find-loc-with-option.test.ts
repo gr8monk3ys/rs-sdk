@@ -10,6 +10,7 @@
 import { describe, expect, test } from 'bun:test';
 import { BotSDK } from '../index';
 import type { BotWorldState, NearbyLoc } from '../types';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 function makeLoc(partial: Partial<NearbyLoc>): NearbyLoc {
     return {
@@ -23,9 +24,15 @@ function makeLoc(partial: Partial<NearbyLoc>): NearbyLoc {
     } as NearbyLoc;
 }
 
+class StatefulSdk extends BotSDK {
+    setState(state: BotWorldState): void {
+        this.state = state;
+    }
+}
+
 function mountSdk(locs: NearbyLoc[]): BotSDK {
-    const sdk = new BotSDK({ botUsername: 'test' });
-    (sdk as any).state = { nearbyLocs: locs } as unknown as BotWorldState;
+    const sdk = new StatefulSdk({ botUsername: 'test' });
+    sdk.setState(fromPartial<BotWorldState>({ nearbyLocs: locs }));
     return sdk;
 }
 
