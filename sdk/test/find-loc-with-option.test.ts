@@ -24,9 +24,15 @@ function makeLoc(partial: Partial<NearbyLoc>): NearbyLoc {
     } as NearbyLoc;
 }
 
+class StatefulSdk extends BotSDK {
+    setState(state: BotWorldState): void {
+        this.state = state;
+    }
+}
+
 function mountSdk(locs: NearbyLoc[]): BotSDK {
-    const sdk = new BotSDK({ botUsername: 'test' });
-    (sdk as any).state = fromPartial<BotWorldState>({ nearbyLocs: locs });
+    const sdk = new StatefulSdk({ botUsername: 'test' });
+    sdk.setState(fromPartial<BotWorldState>({ nearbyLocs: locs }));
     return sdk;
 }
 
